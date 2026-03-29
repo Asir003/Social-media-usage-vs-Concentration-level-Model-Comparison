@@ -86,7 +86,7 @@ class Concentration:
     def run_complete_pipeline(self):
         
         print("\n" + "=" * 60)
-        print("CAR PRICE CLASSIFICATION - MACHINE LEARNING PIPELINE")
+        print("Social-media-usage-vs-Concentration-level-Model-Comparison - MACHINE LEARNING PIPELINE")
         print("=" * 60)
         
         # Step 1: Load data
