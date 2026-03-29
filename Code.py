@@ -109,6 +109,24 @@ class Concentration:
         self.df = self.df[available_columns]
         print(f"    Using {len(available_columns)} columns for modeling")
 
+         # Step 2: Handle missing values
+        print("\n2. Handling missing values...")
+        missing_counts = self.df.isnull().sum()
+        if missing_counts.sum() > 0:
+            print("  Missing values per column:")
+            for col, count in missing_counts[missing_counts > 0].items():
+                print(f"    - {col}: {count} ({count/len(self.df)*100:.2f}%)")
+
+            # For categorical columns: use mode
+            for col in self.categorical_columns:
+                if col in self.df.columns and self.df[col].isnull().sum() > 0:
+                    self.df[col].fillna(self.df[col].mode()[0], inplace=True)
+
+            print("    Missing values filled")
+        else:
+            print("    No missing values found")
+    
+
 
     def run_complete_pipeline(self):
         
