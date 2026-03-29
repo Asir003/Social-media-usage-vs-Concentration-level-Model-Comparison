@@ -200,7 +200,18 @@ class Concentration:
         print(X_encoded.head())
         print(y_encoded[:10])
         """
+        self.X_processed = X_encoded
+        self.y_processed =  y_encoded
+        self.target_classes = list(self.target_encoder.classes_)
 
+        print("\n" + "=" * 60)
+        print("Preprocessing Complete!")
+        print("=" * 60)
+        print(f"  - Final features: {list(X_encoded.columns)}")
+        print(f"  - Feature count: {X_encoded.shape[1]}")
+        print(f"  - Sample count: {X_encoded.shape[0]}")
+
+        
     def run_complete_pipeline(self):
         
         print("\n" + "=" * 60)
