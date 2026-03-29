@@ -82,6 +82,30 @@ class Concentration:
         except Exception as e:
             print(f"✗ Error loading file: {str(e)}")
             raise
+    
+    def preprocess_data(self):
+       
+        print("\n" + "=" * 60)
+        print("Preprocessing Data...")
+        print("=" * 60)
+        
+        # Step 1: Keep only required columns
+        print("\n1. Selecting required columns...")
+        missing_columns = [col for col in self.required_columns if col not in self.df.columns]
+        if missing_columns:
+            print(f"    Warning: Missing columns: {missing_columns}")
+        
+        # Drop columns not in required list
+        columns_to_drop = [col for col in self.df.columns if col not in self.required_columns]
+        if columns_to_drop:
+            # Also drop the first unnamed index column if it exists
+            if self.df.columns[0] == 'Timestamp' or self.df.columns[0] == '':
+                columns_to_drop.append(self.df.columns[0])
+            self.df = self.df.drop(columns=columns_to_drop, errors='ignore')
+            print(f"    Dropped {len(columns_to_drop)} unnecessary columns: {columns_to_drop}")
+        
+       
+
 
     def run_complete_pipeline(self):
         
@@ -91,6 +115,9 @@ class Concentration:
         
         # Step 1: Load data
         self.load_data()
+
+        # Step 2: Preprocess data
+        self.preprocess_data()
 
 
 def main():
