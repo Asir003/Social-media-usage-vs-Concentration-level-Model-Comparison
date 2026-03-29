@@ -30,6 +30,23 @@ sns.set_palette("husl")
 
 class Concentration:
 
+    def __init__(self, csv_file='Social.csv'):
+       
+        self.csv_file = csv_file
+        self.df = None
+        self.X_train = None
+        self.X_test = None
+        self.y_train = None
+        self.y_test = None
+        self.scaler = StandardScaler()
+        self.label_encoders = {}
+        self.target_encoder = LabelEncoder()
+        self.target_classes = None
+        self.models = {}
+        self.model_scores = {}
+        self.best_model = None
+        self.best_model_name = None
+
 
 def main():
     
