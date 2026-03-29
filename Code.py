@@ -179,6 +179,27 @@ class Concentration:
         print("  focus_time categories created successfully!")
         print(" - Categories:", self.df['focus_category'].unique())
 
+        # Step 5:Encode all features
+        print("\n5. Encoding categorical variables...")
+        X = self.df[['daily_hours', 'check_while_study', 'notification_distraction', 'use_in_class']]
+        y = self.df['focus_category']
+
+        X_encoded = X.copy()
+        for col in X_encoded.columns:
+            le = LabelEncoder()
+            X_encoded[col] = le.fit_transform(X_encoded[col].astype(str))
+            self.label_encoders[col] = le
+            print(f"✅ Encoded '{col}': {len(le.classes_)} unique values")
+
+        self.target_encoder = LabelEncoder()
+        y_encoded = self.target_encoder.fit_transform(y)
+        print(f"✅ Encoded target 'focus_category': {len(self.target_encoder.classes_)} classes")
+
+        """
+        print(self.label_encoders['daily_hours'].classes_)
+        print(X_encoded.head())
+        print(y_encoded[:10])
+        """
 
     def run_complete_pipeline(self):
         
