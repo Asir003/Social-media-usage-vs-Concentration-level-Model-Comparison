@@ -99,12 +99,15 @@ class Concentration:
         columns_to_drop = [col for col in self.df.columns if col not in self.required_columns]
         if columns_to_drop:
             # Also drop the first unnamed index column if it exists
-            if self.df.columns[0] == 'Timestamp' or self.df.columns[0] == '':
+            if self.df.columns[0] == 'Unnamed: 0' or self.df.columns[0] == '':
                 columns_to_drop.append(self.df.columns[0])
             self.df = self.df.drop(columns=columns_to_drop, errors='ignore')
             print(f"    Dropped {len(columns_to_drop)} unnecessary columns: {columns_to_drop}")
         
-       
+         # Ensure all required columns exist
+        available_columns = [col for col in self.required_columns if col in self.df.columns]
+        self.df = self.df[available_columns]
+        print(f"    Using {len(available_columns)} columns for modeling")
 
 
     def run_complete_pipeline(self):
