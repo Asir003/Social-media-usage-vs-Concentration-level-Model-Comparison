@@ -67,11 +67,11 @@ class Concentration:
             
             # Rename Columns
             self.df.rename(columns={
-            "How many hours per day do you usually use social media?": "daily_hours",
-            "How often do you check social media while studying?": "check_while_study",
-            "Do social media notifications distract you while studying?": "notification_distraction",
-            "Do you use social media during class?": "use_in_class",
-            "How long can you study continuously without distraction?": "focus_time"
+            '1.How many hours per day do you usually use social media during a regular academic day (when classes are running)?': 'daily_hours',
+            '2. How often do you check social media while studying?': 'check_while_study',
+            '3. Do social media notifications distract you while studying?': 'notification_distraction',
+            '4. Do you use social media during class?': 'use_in_class',
+            '5. How long can you study continuously without distraction?': 'focus_time'
             }, inplace=True)
             print(f"  Rename Columns successfully!")
             print(f"  - Shape: {self.df.shape[0]} rows, {self.df.shape[1]} columns")
