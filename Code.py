@@ -47,6 +47,23 @@ class Concentration:
         self.best_model = None
         self.best_model_name = None
 
+        self.valid_options_dict = {
+            'daily_hours': [
+                "Less than 1 hour", "1–2 hours", "2–4 hours", "4–6 hours", "More than 6 hours"
+            ],
+            'check_while_study': [
+                "Never", "Rarely", "Sometimes", "Often", "Almost always"
+            ],
+            'notification_distraction': [
+                "Not at all", "A little", "Sometimes", "Very much"
+            ],
+            'use_in_class': [
+                "Never", "Sometimes", "Often", "Always"
+            ],
+            'focus_time': [
+                "Less than 15 minutes", "15–30 minutes", "More than 30 minutes"
+            ]
+        }
 
         self.required_columns = [
             'daily_hours', 'check_while_study', 'notification_distraction', 'use_in_class', 'focus_time'
@@ -125,6 +142,28 @@ class Concentration:
             print("    Missing values filled")
         else:
             print("    No missing values found")
+ 
+         # Step 3:Check is there any others values and remove the leading and trailing spaces
+        print("\n3. Checking required columns for unexpected values and cleaning spaces...")
+        for col, valid_options in self.valid_options_dict.items():
+        # Strip spaces
+            self.df[col] = self.df[col].astype(str).str.strip()
+
+            # Find unexpected values
+            mask_invalid = ~self.df[col].isin(valid_options)
+
+            if mask_invalid.any():
+                # Get the mode (most frequent value) of the valid values in the column
+                mode_value = self.df.loc[~mask_invalid, col].mode()[0]  # most common valid value
+                # Replace unexpected values with mode
+                self.df.loc[mask_invalid, col] = mode_value
+                print(f"⚠️ Column '{col}' had {mask_invalid.sum()} unexpected values -> replaced with mode '{mode_value}'")
+            else:
+                print(f" Column '{col}' is clean. No unexpected values found.")
+        
+        
+        print("✅ All required columns cleaned and validated with mode.")
+        
     
 
 
