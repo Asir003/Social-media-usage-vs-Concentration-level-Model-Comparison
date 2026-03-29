@@ -211,7 +211,24 @@ class Concentration:
         print(f"  - Feature count: {X_encoded.shape[1]}")
         print(f"  - Sample count: {X_encoded.shape[0]}")
 
+    def split_data(self, test_size=0.2, random_state=42):
+        print("\n" + "=" * 60)
+        print("Splitting Data...")
+        print("=" * 60)
         
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X_processed,
+            self.y_processed,
+            test_size=test_size,
+            random_state=random_state,
+            stratify=self.y_processed
+        )
+        
+        print(f"  Data split successfully!")
+        print(f"  - Training set: {self.X_train.shape[0]} samples ({1-test_size:.0%})")
+        print(f"  - Testing set: {self.X_test.shape[0]} samples ({test_size:.0%})")
+        print(f"  - Features: {self.X_train.shape[1]}")       
+
     def run_complete_pipeline(self):
         
         print("\n" + "=" * 60)
@@ -223,6 +240,9 @@ class Concentration:
 
         # Step 2: Preprocess data
         self.preprocess_data()
+
+        # Step 3: Split data
+        self.split_data()
 
 
 def main():
