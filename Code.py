@@ -48,6 +48,51 @@ class Concentration:
         self.best_model_name = None
 
 
+        self.required_columns = [
+            'daily_hours', 'check_while_study', 'notification_distraction', 'use_in_class', 'focus_time'
+        ]
+        
+        self.categorical_columns = ['daily_hours', 'check_while_study', 'notification_distraction', 'use_in_class', 'focus_time']
+
+
+    def load_data(self):
+      
+        print("=" * 60)
+        print("Loading Dataset...")
+        print("=" * 60)
+        
+        try:
+            self.df = pd.read_csv(self.csv_file)
+            print(f"  Dataset loaded successfully!")
+            
+            # Rename Columns
+            self.df.rename(columns={
+            "How many hours per day do you usually use social media?": "daily_hours",
+            "How often do you check social media while studying?": "check_while_study",
+            "Do social media notifications distract you while studying?": "notification_distraction",
+            "Do you use social media during class?": "use_in_class",
+            "How long can you study continuously without distraction?": "focus_time"
+            }, inplace=True)
+            print(f"  Rename Columns successfully!")
+            print(f"  - Shape: {self.df.shape[0]} rows, {self.df.shape[1]} columns")
+            print(f"  - Columns: {list(self.df.columns)}")
+        except FileNotFoundError:
+            print(f"✗ Error: File '{self.csv_file}' not found!")
+            raise
+        except Exception as e:
+            print(f"✗ Error loading file: {str(e)}")
+            raise
+
+    def run_complete_pipeline(self):
+        
+        print("\n" + "=" * 60)
+        print("CAR PRICE CLASSIFICATION - MACHINE LEARNING PIPELINE")
+        print("=" * 60)
+        
+        # Step 1: Load data
+        self.load_data()
+
+
 def main():
     
     # Initialize predictor
