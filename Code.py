@@ -163,8 +163,21 @@ class Concentration:
         
         
         print("✅ All required columns cleaned and validated with mode.")
-        
-    
+
+        # Step 4:Creating focus time categories for classification
+        print("\n4.Creating focus time categories for classification...")
+
+        # Map the original text to simpler labels
+        focus_mapping = {
+            "Less than 15 minutes": "Short",
+            "15–30 minutes": "Medium",
+            "More than 30 minutes": "Long"
+        }
+
+        self.df['focus_category'] = self.df['focus_time'].map(focus_mapping)
+
+        print("  focus_time categories created successfully!")
+        print(" - Categories:", self.df['focus_category'].unique())
 
 
     def run_complete_pipeline(self):
