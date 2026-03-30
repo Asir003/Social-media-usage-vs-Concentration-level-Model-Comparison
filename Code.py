@@ -287,7 +287,63 @@ class Concentration:
     def train_all_models(self):
         
         self.train_logistic_regression()
-        self.train_random_forest()       
+        self.train_random_forest() 
+
+    def evaluate_models(self):
+        
+        print("\n" + "=" * 60)
+        print("Evaluating Models...")
+        print("=" * 60)
+        
+        metrics = {}
+        label_names = self.target_classes if self.target_classes else list(self.target_encoder.classes_)
+        num_labels = len(label_names)
+        if num_labels == 0:
+            raise ValueError("Target classes are not defined. Ensure preprocessing has been completed before evaluation.")
+        
+        for name, model in self.models.items():
+            # Make predictions
+            y_train_pred = model.predict(self.X_train)
+            y_test_pred = model.predict(self.X_test)
+            
+            # Calculate metrics
+            train_accuracy = accuracy_score(self.y_train, y_train_pred)
+            test_accuracy = accuracy_score(self.y_test, y_test_pred)
+            precision = precision_score(self.y_test, y_test_pred, average='weighted', zero_division=0)
+            recall = recall_score(self.y_test, y_test_pred, average='weighted', zero_division=0)
+            f1 = f1_score(self.y_test, y_test_pred, average='weighted', zero_division=0)
+            conf_mat = confusion_matrix(self.y_test, y_test_pred, labels=np.arange(num_labels))
+            
+            metrics[name] = {
+                'Train Accuracy': train_accuracy,
+                'Test Accuracy': test_accuracy,
+                'Precision': precision,
+                'Recall': recall,
+                'F1 Score': f1,
+                'Confusion Matrix': conf_mat,
+                'y_test_pred': y_test_pred
+            }
+            
+            print(f"\n{name}:")
+            print(f"  Test Accuracy: {test_accuracy:.4f}")
+            print(f"  Precision (weighted): {precision:.4f}")
+            print(f"  Recall (weighted): {recall:.4f}")
+            print(f"  F1-Score (weighted): {f1:.4f}")
+        
+        self.model_scores = metrics
+        
+        # Select best model based on Test Accuracy
+        best_model_name = max(metrics.keys(), key=lambda x: metrics[x]['Test Accuracy'])
+        self.best_model = self.models[best_model_name]
+        self.best_model_name = best_model_name
+        
+        print("\n" + "=" * 60)
+        print(f" Best Model: {self.best_model_name}")
+        print("=" * 60)
+        print(f"  Test Accuracy: {metrics[best_model_name]['Test Accuracy']:.4f}")
+        print(f"  Precision (weighted): {metrics[best_model_name]['Precision']:.4f}")
+        print(f"  Recall (weighted): {metrics[best_model_name]['Recall']:.4f}")
+        print(f"  F1-Score (weighted): {metrics[best_model_name]['F1 Score']:.4f}")      
 
     def run_complete_pipeline(self):
         
@@ -306,6 +362,9 @@ class Concentration:
 
         # Step 4: Train models
         self.train_all_models()
+
+        # Step 5: Evaluate models
+        self.evaluate_models()
 
 
 def main():
