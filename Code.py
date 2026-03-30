@@ -227,7 +227,67 @@ class Concentration:
         print(f"  Data split successfully!")
         print(f"  - Training set: {self.X_train.shape[0]} samples ({1-test_size:.0%})")
         print(f"  - Testing set: {self.X_test.shape[0]} samples ({test_size:.0%})")
-        print(f"  - Features: {self.X_train.shape[1]}")       
+        print(f"  - Features: {self.X_train.shape[1]}")
+
+    def train_logistic_regression(self):
+      
+        print("\n" + "=" * 60)
+        print("Training Logistic Regression Classifier...")
+        print("=" * 60)
+        
+        param_grid = {
+            'C': [0.01, 0.1, 1.0, 10.0, 100.0],
+            'solver': ['lbfgs', 'saga']
+        }
+        
+        base_model = LogisticRegression(
+            random_state=42,
+            max_iter=2000,
+        )
+        grid_search = GridSearchCV(
+            base_model, param_grid, cv=3,
+            scoring='accuracy', n_jobs=-1, verbose=0
+        )
+        
+        grid_search.fit(self.X_train, self.y_train)
+        
+        self.models['Logistic Regression'] = grid_search.best_estimator_
+        
+        print(f"  Best parameters: {grid_search.best_params_}")
+        print(f"  Best CV Accuracy: {grid_search.best_score_:.4f}")
+    
+    def train_random_forest(self):
+        
+        print("\n" + "=" * 60)
+        print("Training Random Forest Classifier...")
+        print("=" * 60)
+        
+        # Hyperparameter tuning
+        param_grid = {
+            'n_estimators': [50, 100],
+            'max_depth': [10, 20, None],
+            'min_samples_split': [2, 5],
+            'min_samples_leaf': [1, 2]
+        }
+        
+        base_model = RandomForestClassifier(random_state=42, n_jobs=-1)
+        grid_search = GridSearchCV(
+            base_model, param_grid, cv=3,
+            scoring='accuracy', n_jobs=-1, verbose=0
+        )
+        
+        grid_search.fit(self.X_train, self.y_train)
+        
+        self.models['Random Forest Classifier'] = grid_search.best_estimator_
+        
+        print(f"  Best parameters: {grid_search.best_params_}")
+        print(f"  Best CV Accuracy: {grid_search.best_score_:.4f}")
+
+
+    def train_all_models(self):
+        
+        self.train_logistic_regression()
+        self.train_random_forest()       
 
     def run_complete_pipeline(self):
         
@@ -243,6 +303,9 @@ class Concentration:
 
         # Step 3: Split data
         self.split_data()
+
+        # Step 4: Train models
+        self.train_all_models()
 
 
 def main():
