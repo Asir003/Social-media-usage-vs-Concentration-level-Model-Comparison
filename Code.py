@@ -386,6 +386,49 @@ class Concentration:
         print(f"  → Close the plot window to view the next visualization")
         self._show_and_close(fig)
 
+    def plot_roc_curve(self, model_name):
+        
+        if model_name not in self.models:
+            print(f"   Warning: Model '{model_name}' not found in models")
+            return
+
+        model = self.models[model_name]
+        if not hasattr(model, "predict_proba"):
+            print(f"   Model '{model_name}' does not support probability estimates required for ROC curve.")
+            return
+
+        y_score = model.predict_proba(self.X_test)
+        classes = self.target_classes if self.target_classes else self.target_encoder.classes_
+        y_test_binarized = label_binarize(self.y_test, classes=np.arange(len(classes)))
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        color_palette = sns.color_palette("Set2", len(classes))
+
+        for idx, class_name in enumerate(classes):
+            fpr, tpr, _ = roc_curve(y_test_binarized[:, idx], y_score[:, idx])
+            auc_score = auc(fpr, tpr)
+            ax.plot(
+                fpr,
+                tpr,
+                color=color_palette[idx],
+                linewidth=2,
+                label=f"{class_name} (AUC = {auc_score:.3f})"
+            )
+
+        ax.plot([0, 1], [0, 1], linestyle='--', color='grey', linewidth=1, label='Chance')
+        ax.set_title(f'ROC Curve - {model_name}', fontsize=14, fontweight='bold')
+        ax.set_xlabel('False Positive Rate')
+        ax.set_ylabel('True Positive Rate')
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1.05)
+        ax.legend(loc='lower right')
+        ax.grid(True, linestyle='--', alpha=0.4)
+
+        plt.tight_layout()
+        print(f"✓ Displaying ROC curve for {model_name}...")
+        print(f"  → Close the plot window to view the next visualization")
+        self._show_and_close(fig)
+
     def visualize_results(self):
 
         print("\n" + "=" * 60)
@@ -395,9 +438,11 @@ class Concentration:
         # Step 1: Show individual plots for each model sequentially
         print("\n1. Displaying Logistic Regression classification visualization...")
         self.plot_confusion_matrix('Logistic Regression')
+        self.plot_roc_curve('Logistic Regression')
         
         print("\n2. Displaying Random Forest classification visualization...")
         self.plot_confusion_matrix('Random Forest Classifier')
+        self.plot_roc_curve('Random Forest Classifier')
    
 
     def run_complete_pipeline(self):
