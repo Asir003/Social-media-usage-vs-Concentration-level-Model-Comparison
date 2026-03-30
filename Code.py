@@ -343,7 +343,62 @@ class Concentration:
         print(f"  Test Accuracy: {metrics[best_model_name]['Test Accuracy']:.4f}")
         print(f"  Precision (weighted): {metrics[best_model_name]['Precision']:.4f}")
         print(f"  Recall (weighted): {metrics[best_model_name]['Recall']:.4f}")
-        print(f"  F1-Score (weighted): {metrics[best_model_name]['F1 Score']:.4f}")      
+        print(f"  F1-Score (weighted): {metrics[best_model_name]['F1 Score']:.4f}") 
+
+
+    @staticmethod
+    def _show_and_close(fig):
+       
+        plt.show(block=False)
+        while plt.fignum_exists(fig.number):
+            plt.pause(0.1)
+        plt.close(fig)
+
+    def plot_confusion_matrix(self, model_name):
+        
+        if model_name not in self.model_scores:
+            print(f"  ⚠ Warning: Model '{model_name}' not found in model_scores")
+            return
+
+        conf_mat = self.model_scores[model_name]['Confusion Matrix']
+        if conf_mat is None:
+            print(f"  ⚠ Confusion matrix not available for {model_name}")
+            return
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+        sns.heatmap(
+            conf_mat,
+            annot=True,
+            fmt='d',
+            cmap='Blues',
+            cbar=False,
+            xticklabels=self.target_classes,
+            yticklabels=self.target_classes,
+            ax=ax
+        )
+
+        ax.set_xlabel('Predicted Label')
+        ax.set_ylabel('True Label')
+        ax.set_title(f'Confusion Matrix - {model_name}')
+
+        plt.tight_layout()
+        print(f"✓ Displaying confusion matrix for {model_name}...")
+        print(f"  → Close the plot window to view the next visualization")
+        self._show_and_close(fig)
+
+    def visualize_results(self):
+
+        print("\n" + "=" * 60)
+        print("Creating Visualizations...")
+        print("=" * 60)
+        
+        # Step 1: Show individual plots for each model sequentially
+        print("\n1. Displaying Logistic Regression classification visualization...")
+        self.plot_confusion_matrix('Logistic Regression')
+        
+        print("\n2. Displaying Random Forest classification visualization...")
+        self.plot_confusion_matrix('Random Forest Classifier')
+   
 
     def run_complete_pipeline(self):
         
@@ -365,6 +420,9 @@ class Concentration:
 
         # Step 5: Evaluate models
         self.evaluate_models()
+
+        # Step 6: Visualize results
+        self.visualize_results()
 
 
 def main():
