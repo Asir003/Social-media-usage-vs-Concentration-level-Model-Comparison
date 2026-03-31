@@ -245,7 +245,7 @@ class Concentration:
             max_iter=2000,
         )
         grid_search = GridSearchCV(
-            base_model, param_grid, cv=3,
+            base_model, param_grid, cv=5,
             scoring='accuracy', n_jobs=-1, verbose=0
         )
         
@@ -272,7 +272,7 @@ class Concentration:
         
         base_model = RandomForestClassifier(random_state=42, n_jobs=-1)
         grid_search = GridSearchCV(
-            base_model, param_grid, cv=3,
+            base_model, param_grid, cv=5,
             scoring='accuracy', n_jobs=-1, verbose=0
         )
         
