@@ -496,6 +496,28 @@ class Concentration:
         
         self._show_and_close(fig)
 
+    def save_best_model(self, filename='best_car_price_classifier.joblib'):
+       
+        print("\n" + "=" * 60)
+        print("Saving Best Model...")
+        print("=" * 60)
+        
+        # Create a dictionary with model and preprocessors
+        model_package = {
+            'model': self.best_model,
+            'scaler': self.scaler,
+            'label_encoders': self.label_encoders,
+            'feature_columns': list(self.X_train.columns),
+            'model_name': self.best_model_name,
+            'target_encoder': self.target_encoder,
+            'target_classes': self.target_classes
+        }
+        
+        joblib.dump(model_package, filename)
+        print(f"  Best model saved as '{filename}'")
+        print(f"  - Model: {self.best_model_name}")
+        print(f"  - Includes: model, scaler, label encoders, target encoder, and feature columns")
+
     def run_complete_pipeline(self):
         
         print("\n" + "=" * 60)
@@ -519,6 +541,9 @@ class Concentration:
 
         # Step 6: Visualize results
         self.visualize_results()
+
+        # Step 7: Save best model
+        self.save_best_model()
 
 
 def main():
