@@ -443,7 +443,58 @@ class Concentration:
         print("\n2. Displaying Random Forest classification visualization...")
         self.plot_confusion_matrix('Random Forest Classifier')
         self.plot_roc_curve('Random Forest Classifier')
-   
+
+
+         # Step 2: Create final comparison figure with classification metrics
+        print("\n4. Creating classification metrics comparison visualization...")
+        models = list(self.model_scores.keys())
+        accuracies = [self.model_scores[m]['Test Accuracy'] for m in models]
+        precisions = [self.model_scores[m]['Precision'] for m in models]
+        recalls = [self.model_scores[m]['Recall'] for m in models]
+        f1_scores = [self.model_scores[m]['F1 Score'] for m in models]
+
+        x = np.arange(len(models))
+        width = 0.2
+        
+        accuracy_color  = "#6A5ACD"  
+        precision_color = "#FFB347"  
+        recall_color    = "#77DD77"  
+        f1_color        = "#779ECB"  
+
+        fig, ax = plt.subplots(figsize=(14, 8))
+        ax.bar(x - 1.5*width, accuracies, width, label='Accuracy',color=accuracy_color)
+        ax.bar(x - 0.5*width, precisions, width, label='Precision',color=precision_color)
+        ax.bar(x + 0.5*width, recalls, width, label='Recall',color=recall_color)
+        ax.bar(x + 1.5*width, f1_scores, width, label='F1-Score',color=f1_color)
+
+        ax.set_xlabel('Models')
+        ax.set_ylabel('Score')
+        ax.set_title('Classification Metrics Comparison')
+        ax.set_xticks(x)
+        ax.set_xticklabels(models, rotation=0, ha='center')
+        ax.set_ylim(0, 1.05)
+        ax.legend()
+        ax.grid(True, alpha=0.3, linestyle='--', axis='y')
+
+        plt.tight_layout()
+        plt.savefig('model_performance_comparison.png', dpi=300, bbox_inches='tight')
+        print(" Visualization saved as 'model_performance_comparison.png'")
+        
+        # Create a metrics comparison table
+        print("\n" + "=" * 60)
+        print("Model Performance Summary")
+        print("=" * 60)
+        summary_df = pd.DataFrame({
+            'Model': models,
+            'Test Accuracy': accuracies,
+            'Precision': precisions,
+            'Recall': recalls,
+            'F1 Score': f1_scores
+        })
+        summary_df = summary_df.sort_values('Test Accuracy', ascending=False)
+        print(summary_df.to_string(index=False))
+        
+        self._show_and_close(fig)
 
     def run_complete_pipeline(self):
         
