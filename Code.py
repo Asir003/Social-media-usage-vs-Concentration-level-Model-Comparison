@@ -222,6 +222,34 @@ class Concentration:
         print(f"  - Feature count: {X_encoded.shape[1]}")
         print(f"  - Sample count: {X_encoded.shape[0]}")
 
+    def perform_eda(self):
+        print("\n" + "=" * 60)
+        print("Performing Exploratory Data Analysis (EDA)...")
+        print("=" * 60)
+        
+        # Summary Statistics
+        print("\n1. Summary Statistics:")
+        print(self.df.describe(include='all'))
+        
+        # Configure layout for 2 plots
+        fig = plt.figure(figsize=(12, 6))
+        
+        # 1. Bar Chart: Count of Focus Categories
+        ax1 = plt.subplot(1, 2, 1)
+        sns.countplot(data=self.df, x='focus_category', order=['Short', 'Medium', 'Long'], palette='Set2', ax=ax1)
+        ax1.set_title('Bar Chart: Focus Categories Distribution', fontweight='bold')
+        
+        # 2. Pie Chart: Use in Class
+        ax2 = plt.subplot(1, 2, 2)
+        class_counts = self.df['use_in_class'].value_counts()
+        ax2.pie(class_counts, labels=class_counts.index, autopct='%1.1f%%', colors=sns.color_palette("pastel"))
+        ax2.set_title('Pie Chart: Use Social Media in Class', fontweight='bold')
+        
+        plt.tight_layout()
+        print("✓ Displaying EDA Visualizations (Bar Chart and Pie Chart)...")
+        print("  → Close the plot window to continue with the ML training")
+        self._show_and_close(fig)
+
     def split_data(self, test_size=0.2, random_state=42):
         print("\n" + "=" * 60)
         print("Splitting Data...")
@@ -541,19 +569,22 @@ class Concentration:
         # Step 2: Preprocess data
         self.preprocess_data()
 
-        # Step 3: Split data
+        # Step 3: Exploratory Data Analysis
+        self.perform_eda()
+
+        # Step 4: Split data
         self.split_data()
 
-        # Step 4: Train models
+        # Step 5: Train models
         self.train_all_models()
 
-        # Step 5: Evaluate models
+        # Step 6: Evaluate models
         self.evaluate_models()
 
-        # Step 6: Visualize results
+        # Step 7: Visualize results
         self.visualize_results()
 
-        # Step 7: Save best model
+        # Step 8: Save best model
         self.save_best_model()
 
 
