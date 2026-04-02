@@ -161,11 +161,22 @@ class Concentration:
             else:
                 print(f" Column '{col}' is clean. No unexpected values found.")
         
-        
         print("✅ All required columns cleaned and validated with mode.")
 
-        # Step 4:Creating focus time categories for classification
-        print("\n4.Creating focus time categories for classification...")
+
+        # Step 4:Handling duplicate values
+        print("\n4. Detecting and removing duplicate entries...")
+        duplicate_count = self.df.duplicated().sum()
+
+        if duplicate_count > 0:
+            print(f"⚠️ Found {duplicate_count} duplicate rows. Removing them...")
+            self.df = self.df.drop_duplicates()
+            print("✅ Duplicates removed successfully.")
+        else:
+            print("✅ No duplicate rows found.")
+
+        # Step 5:Creating focus time categories for classification
+        print("\n5.Creating focus time categories for classification...")
 
         # Map the original text to simpler labels
         focus_mapping = {
@@ -179,8 +190,8 @@ class Concentration:
         print("  focus_time categories created successfully!")
         print(" - Categories:", self.df['focus_category'].unique())
 
-        # Step 5:Encode all features
-        print("\n5. Encoding categorical variables...")
+        # Step 6:Encode all features
+        print("\n6. Encoding categorical variables...")
         X = self.df[['daily_hours', 'check_while_study', 'notification_distraction', 'use_in_class']]
         y = self.df['focus_category']
 
